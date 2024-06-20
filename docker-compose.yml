@@ -1,0 +1,12 @@
+services:
+  akibot:
+    container_name: akibot
+    restart: unless-stopped
+    image: navystack/akibot
+    volumes:
+      - ./config.json:/home/akibot/dist/config.json
+    networks:
+      - internal
+
+networks:
+  internal:

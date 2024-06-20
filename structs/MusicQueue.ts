@@ -338,7 +338,17 @@ export class MusicQueue {
 
       if (["skip", "stop"].includes(interaction.customId)) collector.stop();
 
-      if (handler) await handler.call(this, interaction);
+      if (handler) {
+        try {
+          await interaction.deferUpdate(); // Defer the update to give more time for processing
+          await handler.call(this, interaction);
+        } catch (error) {
+          console.error(error);
+          if (!interaction.replied) {
+            safeReply(interaction, i18n.__("error.generic")).catch(console.error);
+          }
+        }
+      }
     });
 
     collector.on("end", () => {
