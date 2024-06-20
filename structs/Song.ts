@@ -1,9 +1,9 @@
-import { AudioResource, createAudioResource, StreamType } from "@discordjs/voice";
+import { AudioResource, createAudioResource } from "@discordjs/voice";
 import youtube from "youtube-sr";
 import { i18n } from "../utils/i18n";
 import { videoPattern, isURL } from "../utils/patterns";
-
-const { stream, video_basic_info } = require("play-dl");
+import ytdl from "@distube/ytdl-core";
+import { stream, video_basic_info } from "play-dl";
 
 export interface SongData {
   url: string;
@@ -29,33 +29,40 @@ export class Song {
 
     if (isYoutubeUrl) {
       songInfo = await video_basic_info(url);
+      const videoDetails = songInfo?.video_details;
+
+      if (!videoDetails) {
+        throw new Error("No video details found");
+      }
 
       return new this({
-        url: songInfo.video_details.url,
-        title: songInfo.video_details.title,
-        duration: parseInt(songInfo.video_details.durationInSec)
+        url: videoDetails.url || "",
+        title: videoDetails.title || "Unknown title",
+        duration: parseInt(videoDetails.durationInSec?.toString() || "0")
       });
     } else {
       const result = await youtube.searchOne(search);
 
-      result ? null : console.log(`No results found for ${search}`);
-
       if (!result) {
+        console.log(`No results found for ${search}`);
         let err = new Error(`No search results found for ${search}`);
-
         err.name = "NoResults";
 
         if (isURL.test(url)) err.name = "InvalidURL";
-
         throw err;
       }
 
       songInfo = await video_basic_info(`https://youtube.com/watch?v=${result.id}`);
+      const videoDetails = songInfo?.video_details;
+
+      if (!videoDetails) {
+        throw new Error("No video details found");
+      }
 
       return new this({
-        url: songInfo.video_details.url,
-        title: songInfo.video_details.title,
-        duration: parseInt(songInfo.video_details.durationInSec)
+        url: videoDetails.url || "",
+        title: videoDetails.title || "Unknown title",
+        duration: parseInt(videoDetails.durationInSec?.toString() || "0")
       });
     }
   }
@@ -66,12 +73,17 @@ export class Song {
     const source = this.url.includes("youtube") ? "youtube" : "soundcloud";
 
     if (source === "youtube") {
-      playStream = await stream(this.url);
+      // Use ytdl-core for YouTube
+      playStream = ytdl(this.url, { filter: "audioonly", quality: "highestaudio" });
+    } else {
+      // Use play-dl for other sources
+      const playDlStream = await stream(this.url);
+      playStream = playDlStream.stream;
     }
 
-    if (!stream) return;
+    if (!playStream) throw new Error("No stream found");
 
-    return createAudioResource(playStream.stream, { metadata: this, inputType: playStream.type, inlineVolume: true });
+    return createAudioResource(playStream, { metadata: this, inlineVolume: true });
   }
 
   public startMessage() {

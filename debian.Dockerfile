@@ -16,7 +16,7 @@ RUN corepack enable \
 
 RUN apt-get update \
   && apt-get -y --no-install-recommends install tini \
-  && apt-get install -y --no-install-recommends python3 build-essential git  \
+  && apt-get install -y --no-install-recommends python3 build-essential  \
   && apt-get purge -y --auto-remove  \
   && rm -rf /var/lib/apt/lists/*
 

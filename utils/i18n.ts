@@ -48,6 +48,7 @@ i18n.configure({
   },
 
   missingKeyFn: function (locale, value) {
+    console.log(`Missing key in locale ${locale}: ${value}`);
     return value;
   },
 
