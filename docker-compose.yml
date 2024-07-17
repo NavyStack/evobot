@@ -1,12 +1,13 @@
 services:
-  akibot:
-    container_name: akibot
+  evobot:
+    container_name: evobot
     restart: unless-stopped
-    image: navystack/akibot
-    volumes:
-      - ./config.json:/home/akibot/dist/config.json
+    image: navystack/evobot
+    #volumes:
+    #  - ./config.json:/home/evobot/dist/config.json
     networks:
       - internal
-
-networks:
+    #environment:
+    #  - 'DISCORD_TOKEN=some-important-key'
+networks: 
   internal:
