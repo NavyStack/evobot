@@ -110,8 +110,9 @@ export class Song {
       const playStream = this.url.includes("youtube")
         ? ytdl(this.url, {
             filter: "audioonly",
-            liveBuffer: 0,
-            highWaterMark: 1 << 25, // Set high water mark to handle large streams
+            liveBuffer: 2000,
+            highWaterMark: 16384,
+            dlChunkSize: 65536,
             quality: "highestaudio" // Request the highest quality audio
           })
         : await this.createPlayDlStream();
