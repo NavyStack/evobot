@@ -41,7 +41,8 @@ ENV PNPM_HOME="/pnpm" \
   UID=1001 \
   GID=1001 \
   TZ="Asia/Seoul" \
-  GOSU_VERSION=1.17
+  GOSU_VERSION=1.17 \
+  NODE_DEBUG=net
 
 WORKDIR /home/evobot
 
