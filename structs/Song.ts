@@ -74,14 +74,20 @@ export class Song {
 
     if (source === "youtube") {
       // Use ytdl-core for YouTube
-      playStream = ytdl(this.url, { filter: "audioonly", liveBuffer: 0, quality: "highestaudio" });
+      playStream = ytdl(this.url, {
+        filter: "audioonly",
+        liveBuffer: 0,
+        highWaterMark: 16384,
+        dlChunkSize: 65536,
+        quality: "highestaudio"
+      });
     } else {
       // Use play-dl for other sources
       const playDlStream = await stream(this.url);
       playStream = playDlStream.stream;
     }
     if (!stream) return;
-    
+
     if (!playStream) throw new Error("No stream found");
 
     return createAudioResource(playStream, { metadata: this, inlineVolume: true });

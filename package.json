@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@discordjs/voice": "^0.17.0",
-    "@distube/ytdl-core": "^4.13.5",
+    "@distube/ytdl-core": "^4.14.4",
     "array-move": "^3.0.1",
     "discord.js": "^14.15.3",
     "dotenv": "^16.4.5",
@@ -37,7 +37,7 @@
   },
   "devDependencies": {
     "@types/i18n": "^0.13.12",
-    "@types/node": "^20.14.12",
+    "@types/node": "^22.2.0",
     "cz-conventional-changelog": "^3.3.0",
     "nodemon": "^3.1.4",
     "prettier": "^3.3.3",
